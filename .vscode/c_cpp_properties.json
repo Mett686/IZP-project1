@@ -1,0 +1,26 @@
+{
+    "configurations": [
+        {
+            "name": "Win32",
+            "includePath": [
+                "${workspaceFolder}/**"
+            ],
+            "defines": [
+                "_DEBUG",
+                "UNICODE",
+                "_UNICODE"
+            ],
+            "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
+            "compilerArgs": [
+                "-std=c11",
+                "-Wall",
+                "-Wextra",
+                "-Werror"
+            ],
+            "intelliSenseMode": "linux-gcc-x86",
+            "cStandard": "c23",
+            "cppStandard": "c++26"
+        }
+    ],
+    "version": 4
+}
