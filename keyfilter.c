@@ -1,8 +1,10 @@
-#include<stdio.h>
+#include <stdio.h>
 
 //idk whats happening
 //help me
 
-int main() {
-    printf("Hello world!");
-};
+int main(void) {
+    fprintf(stdout, "Hello world!");
+
+    return 0;
+}
