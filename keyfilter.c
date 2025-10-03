@@ -58,27 +58,6 @@ int main(int argc, char **argv) {
 
     create_adress(adress, argc, argv);
     printf("%s\n", adress);
-
-
-
-    #if 0
-    for (int i = ADRESS_START; i < argc; i++) {
-        printf("%c  ", to_lower(argv[i][0]));
-    }
-    #endif
-
-
-    #if 0
-    char adress_str[MAX_ADRESS_LENGTH] = {};
-  
-    for (int word_idx = ADRESS_START; word_idx < argc; ++word_idx) {
-        for (int char_idx = 0; argv[word_idx][char_idx] != ' '; ++char_idx) {
-
-        }
-    }
-    #endif
-
-
-
+    
     return 0;
 }
