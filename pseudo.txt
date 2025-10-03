@@ -1,0 +1,8 @@
+precist stdin a ulozit data ve vyhovujicim formatu
+
+precist argument
+porovnat argument se seznamem
+
+ulozit vyhovujicim
+
+vytisknout je
