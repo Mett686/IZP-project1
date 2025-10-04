@@ -1,9 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <unistd.h>//debug
 
 #define MAX_ADRESS_LENGTH 128       //Max length of our adress row
-#define MAX_FOUND 128               //Max lenght of list of found characters
+#define MAX_ENABLED 128             //Max lenght of list of enabled characters
 #define ADRESS_START 1              //The index of first argument representig the adress (how many main args to skip)
 #define ASCII_a 97                  //ASCII value of 'A'
 #define ASCII_z 122                 //ACII value of 'Z'
@@ -19,10 +20,13 @@ char to_capital(char c) {
     return (char)ascii;
 }
 
-int str_copy(int len, char *in, char *out) {
-    for(int i = 0; i < len; i++) {
-        out[i] = in[i];
+int str_copy(char *in, char *out) {
+    int idx = 0;
+    while(in[idx] != '\0') {
+        out[idx] = in[idx];
+        idx++;
     }
+    out[idx] = '\0';
     return EXIT_SUCCESS;
 }
 
@@ -83,8 +87,8 @@ int create_query_str(int *p_query_len, char *query, int arr_len, char **str_arra
     return EXIT_SUCCESS;
 }
 
-char *getline() {
-    static char line[MAX_ADRESS_LENGTH];
+int getline(char *p_adress) {
+    char line[MAX_ADRESS_LENGTH];
     char c;
     int i = 0;
     while((c = (char)getchar()) != '\n') {
@@ -92,10 +96,11 @@ char *getline() {
         if(c == EOF) {
             if(i == 0) {
                 line[i] = EOF;
-                return line;
+                printf("EOF first");
+                break;
             }
-            line[i] = '\0';
-            return line;
+            printf("EOF in line");
+            break;
         }
         line[i] = to_capital(c);
         i++;
@@ -103,7 +108,8 @@ char *getline() {
     line[i] = '\0';
     printf("Adress: %s\n", line); //debug
     printf("Adress len: %d\n", i + 1); //debug
-    return line;
+    str_copy(line, p_adress);
+    return EXIT_SUCCESS;
 }
 
 int compare(int query_len, char *query, char *adress, char *match, char *enabled_list) {    
@@ -114,10 +120,10 @@ int compare(int query_len, char *query, char *adress, char *match, char *enabled
             }
         } else {
             if(adress[i] == '\0') {
-                str_copy(query_len, adress, match);
+                str_copy(adress, match);
                 return MATCH;
             } else {
-                list_expand(MAX_FOUND, adress[i], enabled_list);
+                list_expand(MAX_ENABLED, adress[i], enabled_list);
                 return EXIT_SUCCESS;
             }
         }
@@ -126,29 +132,46 @@ int compare(int query_len, char *query, char *adress, char *match, char *enabled
 }
 
 int main(int argc, char **argv) {
-    #if 1 //debug
+    #if 0 //debug
     printf("argc: %d\n", argc);
     for(int i = 0; i < argc; i++) {
         printf("arg%d: %s\n", i, argv[i]);
     }
     #endif
     
-    //char query[MAX_ADRESS_LENGTH];
-    //int query_len = 0;
-    
-    //create_query_str(&query_len, query, argc, argv);
-    //printf("Query: %s\n", query);
-    //printf("Query len: %d\n", query_len);
+    char query[MAX_ADRESS_LENGTH];
+    int query_len;
+    char match[MAX_ADRESS_LENGTH];
+    char enabled[MAX_ENABLED];
+    char adress[MAX_ADRESS_LENGTH] = " ";
+    bool found_match = false;
+    bool found_next = false;
 
-    char idk[MAX_FOUND] = "ABDZ";
-    list_expand(MAX_FOUND, 'F', idk);
-    list_expand(MAX_FOUND, 'D', idk);
-    list_expand(MAX_FOUND, 'C', idk);
-    list_expand(MAX_FOUND, 'G', idk);
-    list_expand(MAX_FOUND, '%', idk);
-    printf("\nList: %s\n", idk);
+    create_query_str(&query_len, query, argc, argv);
 
-    //getline();
+    while (adress[0] != '\0') {
+        getline(adress);
+        for(int i = 0; adress[i] != '\0'; i++) {
+            printf("%d", (int)adress[i]);
+        }
+        putchar('\n');
+        int result = compare(query_len, query, adress, match, enabled);
+        if(result == MATCH) {
+            found_match = true;
+        } else if(result == EXIT_SUCCESS) {
+            found_next = true;
+        }
+        sleep(3); //debug
+    }
 
+    if(found_match) {
+        printf("Found: %s", match);
+    } if (found_next) {
+        printf("Enable: %s", enabled);
+    } if (!(found_match || found_next)) {
+        printf("Not found");
+    }
     return EXIT_SUCCESS;
 }
+
+//nefaka getline prepsat aby returnovala stav o konci
