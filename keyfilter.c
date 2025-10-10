@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdbool.h>
+#include <string.h>
 
 #define MAX_ADRESS_LENGTH 128       //Max length of adress(query) string
 #define MAX_ENABLED 128             //Max count of enabled characters
