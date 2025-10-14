@@ -8,7 +8,7 @@
 #define ADRESS_START 1              //The index of first argument representig the adress (how many main args to skip)
 #define ASCII_SHIFT -32             //How much to shift in ascii from lower-case to upper-case
 
-//find_match return status codes:
+//find_match status codes:
 #define PREFIX_MATCH 10
 #define MATCH 11
 #define NO_MATCH 12
@@ -21,7 +21,7 @@ void capitalize(char *string);
 
 //Writes stdin line to provided string
 //Stops at '\n' and replaces it with '\0'
-int getline(char *string, int max_len);
+int scanline(char *string, int max_len);
 
 //Compares query with string and returns status code:
 //PREFIX_MATCH, MATCH or NO_MATCH theese need to be defined.
@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     }
     capitalize(query);
 
-    while(getline(adress, MAX_ADRESS_LENGTH) == EXIT_SUCCESS) {
+    while(scanline(adress, MAX_ADRESS_LENGTH) == EXIT_SUCCESS) {
         capitalize(adress);
         int status = find_match(query, adress, enabled);
         if(status != EXIT_FAILURE) {
@@ -111,7 +111,7 @@ void capitalize(char *string) {
     }
 }
 
-int getline(char *string, int max_len) {
+int scanline(char *string, int max_len) {
     char c = 1;
     int i = 0;
     while(((c = getchar()) != '\n') && i < max_len) {
