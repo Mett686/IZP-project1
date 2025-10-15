@@ -18,7 +18,7 @@
                 "-Werror"
             ],
             "intelliSenseMode": "linux-gcc-x86",
-            "cStandard": "c23",
+            "cStandard": "c11",
             "cppStandard": "c++26"
         }
     ],
