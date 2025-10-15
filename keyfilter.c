@@ -36,19 +36,19 @@ int main(int argc, char **argv) {
     char best_match[MAX_ADRESS_LENGTH];
     char adress[MAX_ADRESS_LENGTH];
 
-    if(strlen(argv[1]) > MAX_ADRESS_LENGTH) {
-        fprintf(stderr, "Argument 1 of main is too long. Maximum size: %d\n", MAX_ADRESS_LENGTH);
-        return EXIT_FAILURE;
-    }
     if(argc != ARG_COUNT) {
         if(argc > ARG_COUNT) {
             fprintf(stderr, "Too many arguments. Maximum: %d\n", ARG_COUNT-1);
             return EXIT_FAILURE;
         }
     } else {
+        if(strlen(argv[1]) > MAX_ADRESS_LENGTH) {
+            fprintf(stderr, "Argument 1 of main is too long. Maximum size: %d\n", MAX_ADRESS_LENGTH);
+            return EXIT_FAILURE;
+        }
         strcpy(query, argv[1]);
     }
-
+    
     capitalize(query);
 
     while(scanline(adress, MAX_ADRESS_LENGTH) == EXIT_SUCCESS) {
@@ -60,7 +60,7 @@ int main(int argc, char **argv) {
                 strcpy(best_match, adress);
                 found_match = true;
                 match_count++;
-            } if(status == PREFIX_MATCH) {
+            } else if(status == PREFIX_MATCH) {
                 if(match_count == 0) {
                     strcpy(best_match, adress);
                 }
@@ -133,7 +133,7 @@ int find_match(char *query, char *adress, char *next){
     if(query[i] == '\0') {
         return MATCH;
     }
-    return EXIT_FAILURE;
+    return NO_MATCH;
 }
 
 int add_ordered(char c, char *string, int length) {
