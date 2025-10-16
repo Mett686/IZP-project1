@@ -2,51 +2,51 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <string.h>
+            
+#define MAX_ADDRESS_LENGTH 128       // Max length of address(query) string
+#define MAX_ENABLED 256             // Max count of enabled characters
+#define ARG_COUNT 2                 // Number of supported args
+#define ASCII_SHIFT -32             // Difference between lowercase and uppercase in ascii
 
-#define MAX_ADRESS_LENGTH 128       // Max length of adress(query) string
-#define MAX_ENABLED 128             // Max count of enabled characters
-#define ARG_COUNT 2                 // Number of suppoerted args
-#define ASCII_SHIFT -32             // How much to shift in ascii from lower-case to upper-case
-
-// find_match status codes (cannot be 1):
+// address_cmp status codes (cannot be 1):
 #define PREFIX_MATCH 2
 #define MATCH 3
 #define NO_MATCH 4
 
-// Replaces lower-case with upper-case letters in string
+// Replaces lowercase with uppercase letters in string
 void capitalize(char *string);
 
-// Writes stdin line to provided string
-// Stops at '\n' and replaces it with '\0'
+// Reads stdin into provided string
+// Stops at '\n' or EOF and replaces it with '\0'
 int scanline(char *string, int max_len);
 
 // Compares query with string and returns status code:
-// PREFIX_MATCH, MATCH or NO_MATCH theese need to be defined.
-// If query is a prefix of adress, adds next character to next ordered string.
-int find_match(char *query, char *adress, char *next);
+// PREFIX_MATCH, MATCH or NO_MATCH (theese need to be defined)
+// If query is a prefix of address, writes it to next with add_ordered().
+int address_cmp(char *query, char *address, char *next);
 
-// Writes character to a ordered string in a way that it stays ordered after.
+// Inserts character to a ordered string in a way that it stays ordered after.
 int add_ordered(char c, char *list, int length);
 
 int main(int argc, char **argv) {
 
-    char query[MAX_ADRESS_LENGTH] = ""; // argv
-    char adress[MAX_ADRESS_LENGTH];     // stdin
+    char query[MAX_ADDRESS_LENGTH] = ""; // argv
+    char address[MAX_ADDRESS_LENGTH];     // stdin
     char enabled[MAX_ENABLED] = "";     // string of enabled chars
     int match_count = 0;                //
     bool match_found = false;           // has exatct match been found
-    char best_match[MAX_ADRESS_LENGTH]; // string to be printed if found
+    char best_match[MAX_ADDRESS_LENGTH]; // string to be printed if found
 
-    // Here we check for argument compliance
-    // in case of empty arg we skip strcpy()
+    // Check for argument compliance
+    // skip strcpy() if no argument is provided
     if(argc != ARG_COUNT) {
         if(argc > ARG_COUNT) {
             fprintf(stderr, "Too many arguments. Maximum: %d\n", ARG_COUNT-1);
             return EXIT_FAILURE;
         }
     } else {
-        if(strlen(argv[1]) > MAX_ADRESS_LENGTH) {
-            fprintf(stderr, "Argument 1 of main is too long. Maximum size: %d\n", MAX_ADRESS_LENGTH);
+        if(strlen(argv[1]) > MAX_ADDRESS_LENGTH) {
+            fprintf(stderr, "Argument 1 of main is too long. Maximum size: %d\n", MAX_ADDRESS_LENGTH);
             return EXIT_FAILURE;
         }
         strcpy(query, argv[1]);
@@ -54,33 +54,32 @@ int main(int argc, char **argv) {
     
     capitalize(query);
 
-    // What happens here? While there is still something to read from stdin
-    // this does certain action depanding on find_match status
-    // the first adress is always stored in best_match
-    // match count is incremented on match
-    // enabled chars are expanded in find_match()
-    while(scanline(adress, MAX_ADRESS_LENGTH) == EXIT_SUCCESS) {
-        capitalize(adress);
+    // While there is still something to read from stdin
+    // compare it using address_cmp status
+    // - store in best_match if MATCH or PREFIX_MATCH
+    // - expand enabled with characters on PREFIX_MATCH
+    // - increment match count on each match
+    while(scanline(address, MAX_ADDRESS_LENGTH) == EXIT_SUCCESS) {
+        capitalize(address);
 
-        int status = find_match(query, adress, enabled);
+        int status = address_cmp(query, address, enabled);
 
         if(status == EXIT_FAILURE) {
-            fprintf(stderr, "find_match returned Error value: %d\n", status);
+            fprintf(stderr, "address_cmp returned Error value: %d\n", status);
             return EXIT_FAILURE;
         } if(status == MATCH) {
-            strcpy(best_match, adress);
+            strcpy(best_match, address);
             match_found = true;
             match_count++;
         } else if(status == PREFIX_MATCH) {
             if(match_count == 0) {
-                strcpy(best_match, adress);
+                strcpy(best_match, address);
             }
             match_count++;
         }
     }
 
-    // Here we print results based on values
-    // of match_count and match_found
+    // Print results dictated by match_count and match_found
     if(match_count == 0) {
         printf("Not found\n");
     } else {
@@ -121,14 +120,14 @@ int scanline(char *string, int max_len) {
     return EXIT_SUCCESS;
 }
 
-int find_match(char *query, char *adress, char *next){
+int address_cmp(char *query, char *address, char *next){
     int i = 0;
-    while(adress[i] != '\0') {
+    while(address[i] != '\0') {
         if(query[i] == '\0') {
-            add_ordered(adress[i], next, MAX_ADRESS_LENGTH);
+            add_ordered(address[i], next, MAX_ADDRESS_LENGTH);
             return PREFIX_MATCH;
         }
-        if(adress[i] != query[i]) {
+        if(address[i] != query[i]) {
             return NO_MATCH;
         }
         i++;
@@ -153,6 +152,6 @@ int add_ordered(char c, char *string, int length) {
             c = tmp;
         }
     }
-    fprintf(stderr, "string in add_ordered is too long");
+    fprintf(stderr, "string in add_ordered is too long\n");
     return EXIT_FAILURE;
 }
