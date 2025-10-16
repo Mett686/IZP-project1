@@ -12,7 +12,6 @@
             ],
             "compilerPath": "C:/msys64/ucrt64/bin/gcc.exe",
             "compilerArgs": [
-                "-std=c11",
                 "-Wall",
                 "-Wextra",
                 "-Werror"
