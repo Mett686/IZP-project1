@@ -1,6 +1,6 @@
 # IZP Project 1 – Text Processing & CLI Filtering
 
-First project for the **IZP (Introduction to Programming Systems)** course, written in C.
+First project for the **IZP (Zaklady programovani)** course, written in C.
 
 ## Overview
 A command-line text filtering and search utility operating on standard input (`stdin`). Built using standard C string/character processing without dynamic memory allocation.
